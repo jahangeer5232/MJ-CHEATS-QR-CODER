@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MJ QR Code Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        html, body { height: 100%; margin: 0; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0b0b0b, #1a1a1a);
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+        }
+        .content { flex: 1; padding-top: 80px; }
+        h2 { margin-bottom: 25px; animation: fadeIn 1s ease-in-out; }
+        input { width: 300px; padding: 10px; border-radius: 5px; border: none; outline: none; font-size: 16px; }
+        button { padding: 10px 20px; margin-left: 10px; border: none; border-radius: 5px; background: #ff4444; color: white; cursor: pointer; transition: transform 0.2s, background 0.3s; }
+        button:hover { transform: scale(1.05); background: #ff2222; }
+
+        #qr-box {
+            margin: 70px auto 0;
+            padding: 30px;
+            width: 260px;
+            background: linear-gradient(145deg, #222, #333);
+            border-radius: 18px;
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.8), 0 0 80px rgba(255, 0, 0, 0.3) inset;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: popIn 0.8s ease-in-out;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        #qr-box:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 50px rgba(255, 0, 0, 1), 0 0 100px rgba(255, 0, 0, 0.4) inset;
+        }
+
+        #qrcode { background: white; padding: 15px; border-radius: 10px; box-sizing: content-box; }
+        #qrcode canvas { display: block; background: white; }
+
+        #downloadBtn {
+            margin-top: 20px;
+            padding: 10px 25px;
+            background: #44ff44;
+            color: black;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            text-align: center;
+            transition: background 0.3s, transform 0.2s;
+        }
+        #downloadBtn:hover { background: #22ff22; transform: scale(1.05); }
+
+        footer { background: #0a0a0a; border-top: 1px solid #333; padding: 15px 0; font-size: 14px; color: #aaa; }
+        footer span { color: #ff4444; font-weight: bold; }
+
+        @keyframes fadeIn { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { 0% { transform: scale(0.5) rotate(-15deg); opacity: 0; } 50% { transform: scale(1.05) rotate(5deg); } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <h2>MJ CHEATS ON TOP</h2>
+        <input type="text" id="linkInput" placeholder="Website link paste karo">
+        <button onclick="generateQR()">Generate QR</button>
+
+        <div id="qr-box">
+            <div id="qrcode"></div>
+            <button id="downloadBtn" onclick="downloadQR()">Download QR</button>
+        </div>
+    </div>
+
+    <footer>© 2026 <span>MJ CHEATS</span>. All Rights Reserved.</footer>
+
+    <script>
+        let qrcode;
+
+        function generateQR() {
+            let qrDiv = document.getElementById("qrcode");
+            qrDiv.innerHTML = "";
+            let link = document.getElementById("linkInput").value.trim();
+            if (!link) { alert("Please link paste karo!"); return; }
+
+            qrcode = new QRCode(qrDiv, {
+                text: link,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        function downloadQR() {
+            let canvasQR = document.querySelector("#qrcode canvas");
+            if (!canvasQR) { alert("QR pehle generate karo!"); return; }
+
+            // Download ke liye sirf clean QR + white padding
+            let padding = 20; // premium look ke liye thodi space
+            let size = canvasQR.width + padding*2;
+            let tempCanvas = document.createElement("canvas");
+            tempCanvas.width = size;
+            tempCanvas.height = size;
+            let ctx = tempCanvas.getContext("2d");
+
+            // White background (safe for scanning)
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, size, size);
+
+            // Draw original QR on center
+            ctx.drawImage(canvasQR, padding, padding);
+
+            // Download
+            let a = document.createElement("a");
+            a.href = tempCanvas.toDataURL("image/png");
+            a.download = "MJ_QR_Code.png";
+            a.click();
+        }
+    </script>
+</body>
+</html>
